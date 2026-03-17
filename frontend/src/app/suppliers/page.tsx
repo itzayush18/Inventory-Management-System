@@ -11,6 +11,7 @@ export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: '', contact_person: '', email: '', phone: '', address: ''
   });
@@ -33,12 +34,40 @@ export default function SuppliersPage() {
   const handleAddSupplier = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.post('/suppliers', formData);
+      if (editingId) {
+        await api.patch(`/suppliers/${editingId}`, formData);
+      } else {
+        await api.post('/suppliers', formData);
+      }
       setIsModalOpen(false);
       fetchSuppliers();
       setFormData({ name: '', contact_person: '', email: '', phone: '', address: '' });
+      setEditingId(null);
     } catch (err) {
-      console.error('Failed to add supplier', err);
+      console.error('Failed to save supplier', err);
+    }
+  };
+
+  const handleEdit = (supplier: any) => {
+    setEditingId(supplier.id);
+    setFormData({
+      name: supplier.name,
+      contact_person: supplier.contact_person,
+      email: supplier.email,
+      phone: supplier.phone,
+      address: supplier.address
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm('Are you sure you want to delete this supplier? Connected products will lose their supplier reference.')) {
+      try {
+        await api.delete(`/suppliers/${id}`);
+        fetchSuppliers();
+      } catch (err) {
+        console.error('Failed to delete supplier', err);
+      }
     }
   };
 
@@ -59,7 +88,11 @@ export default function SuppliersPage() {
             <p className="text-slate-400 mt-2 text-lg font-medium">Manage your upstream communication and vendor protocols.</p>
           </div>
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setEditingId(null);
+              setFormData({ name: '', contact_person: '', email: '', phone: '', address: '' });
+              setIsModalOpen(true);
+            }}
             className="btn-primary flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40"
           >
             <Plus size={20} />
@@ -67,7 +100,7 @@ export default function SuppliersPage() {
           </button>
         </motion.header>
 
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Vendor Onboarding">
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? "Update Vendor" : "Vendor Onboarding"}>
           <form onSubmit={handleAddSupplier} className="space-y-5">
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
@@ -127,7 +160,7 @@ export default function SuppliersPage() {
             </div>
 
             <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-black shadow-2xl shadow-emerald-900/40 active:scale-[0.98] transition-all mt-4">
-              FINALIZE ONBOARDING
+              {editingId ? "UPDATE VENDOR" : "FINALIZE ONBOARDING"}
             </button>
           </form>
         </Modal>
@@ -151,10 +184,10 @@ export default function SuppliersPage() {
                   className="glass-card p-8 group relative overflow-hidden hover:border-emerald-500/50 transition-all"
                 >
                   <div className="absolute top-0 right-0 p-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                      <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
+                      <button onClick={() => handleEdit(s)} className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
                         <Edit2 size={16} />
                       </button>
-                      <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
+                      <button onClick={() => handleDelete(s.id)} className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
                         <Trash2 size={16} />
                       </button>
                   </div>
@@ -198,10 +231,6 @@ export default function SuppliersPage() {
                   </div>
 
                   <div className="mt-8 pt-8 border-t border-white/5 flex gap-4">
-                     <button className="flex-1 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 border border-white/5">
-                        <Globe size={16} className="text-blue-500" />
-                        Network Node
-                     </button>
                   </div>
                 </motion.div>
               ))

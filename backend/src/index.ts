@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
 import { authRoutes } from './routes/auth';
 import { inventoryRoutes } from './routes/inventory';
+import { reportsRoutes } from './routes/reports.routes';
 type Variables = {
   jwtPayload: {
     id: number;
@@ -30,6 +31,7 @@ app.use('/api/*', jwt({
 }));
 
 app.route('/api', inventoryRoutes);
+app.route('/api/reports', reportsRoutes);
 
 export default {
   port: process.env.PORT || 3001,

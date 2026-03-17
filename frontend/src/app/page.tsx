@@ -31,7 +31,7 @@ const StatCard = ({ title, value, icon: Icon, color }: any) => {
       </div>
       <div>
         <p className="text-slate-400 text-sm font-semibold tracking-wide uppercase">{title}</p>
-        <h3 className="text-4xl font-black mt-2 text-white">{value}</h3>
+        <h3 className="text-xl lg:text-2xl font-black mt-2 text-white break-words">{value}</h3>
       </div>
     </motion.div>
   );
@@ -159,7 +159,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <StatCard title="Total Assets" value={stats.totalProducts} icon={Box} color="blue" />
-          <StatCard title="Inventory Value" value={`$${Number(stats.totalValue).toLocaleString()}`} icon={TrendingUp} color="emerald" />
+          <StatCard title="Inventory Value" value={`₹${Number(stats.totalValue).toLocaleString()}`} icon={TrendingUp} color="emerald" />
           <StatCard title="Critical Stock" value={stats.lowStock} icon={AlertTriangle} color="amber" />
           <StatCard title="Operations" value={stats.recentActivities.length} icon={Users} color="purple" />
         </div>

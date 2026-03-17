@@ -55,6 +55,19 @@ inventoryRoutes.post('/suppliers', async (c) => {
   return c.json({ id: insertId, ...body }, 201);
 });
 
+inventoryRoutes.patch('/suppliers/:id', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  await InventoryService.updateSupplier(id, body);
+  return c.json({ message: 'Supplier updated' });
+});
+
+inventoryRoutes.delete('/suppliers/:id', async (c) => {
+  const id = c.req.param('id');
+  await InventoryService.deleteSupplier(id);
+  return c.json({ message: 'Supplier deleted' });
+});
+
 // Stock Transactions
 inventoryRoutes.post('/stock-transactions', async (c) => {
   try {

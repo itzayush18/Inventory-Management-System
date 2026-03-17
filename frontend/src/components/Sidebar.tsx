@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Box, Tags, Truck, History, LogOut } from 'lucide-react';
+import { LayoutDashboard, Box, Tags, Truck, History, LogOut, PieChart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Sidebar = () => {
@@ -14,6 +14,7 @@ const Sidebar = () => {
     { name: 'Categories', icon: Tags, href: '/categories' },
     { name: 'Suppliers', icon: Truck, href: '/suppliers' },
     { name: 'Transactions', icon: History, href: '/transactions' },
+    { name: 'Reports', icon: PieChart, href: '/reports' },
   ];
 
   return (

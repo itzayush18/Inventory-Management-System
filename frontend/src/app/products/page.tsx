@@ -148,7 +148,7 @@ export default function ProductsPage() {
 
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Unit Price ($)</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Unit Price (₹)</label>
                 <input 
                   required type="number" step="0.01"
                   className="input-field" 
@@ -261,7 +261,7 @@ export default function ProductsPage() {
                         <td className="px-8 py-5">
                           <span className="px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-wider">{p.category_name || 'General'}</span>
                         </td>
-                        <td className="px-8 py-5 font-black text-white text-lg">${Number(p.price).toFixed(2)}</td>
+                        <td className="px-8 py-5 font-black text-white text-lg">₹{Number(p.price).toFixed(2)}</td>
                         <td className="px-8 py-5">
                           <div className="flex items-center gap-3">
                              <div className={`w-2.5 h-2.5 rounded-full ${p.stock_quantity <= p.min_stock_level ? 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.6)] animate-pulse' : 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]'}`}></div>

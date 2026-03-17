@@ -53,4 +53,14 @@ export class InventoryService {
     );
     return result.insertId;
   }
+
+  static async updateSupplier(id: string, data: any) {
+    const fields = Object.keys(data).map(key => `${key} = ?`).join(', ');
+    const values = [...Object.values(data), id];
+    await pool.query(`UPDATE suppliers SET ${fields} WHERE id = ?`, values);
+  }
+
+  static async deleteSupplier(id: string) {
+    await pool.query('DELETE FROM suppliers WHERE id = ?', [id]);
+  }
 }

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts",
+    "db:clean": "bun src/db/clean-db.ts",
     "db:init": "bun src/db/setup-db.ts",
     "db:seed": "bun src/db/seed.ts",
     "typecheck": "bun x tsc --noEmit"
