@@ -25,6 +25,10 @@ export class InventoryService {
     await pool.query(`UPDATE products SET ${fields} WHERE id = ?`, values);
   }
 
+  static async deleteProduct(id: string) {
+    await pool.query('DELETE FROM products WHERE id = ?', [id]);
+  }
+
   // Categories
   static async getAllCategories() {
     const [rows] = await pool.query('SELECT * FROM categories');

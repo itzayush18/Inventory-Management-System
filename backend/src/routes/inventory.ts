@@ -31,6 +31,12 @@ inventoryRoutes.patch('/products/:id', async (c) => {
   return c.json({ message: 'Product updated' });
 });
 
+inventoryRoutes.delete('/products/:id', async (c) => {
+  const id = c.req.param('id');
+  await InventoryService.deleteProduct(id);
+  return c.json({ message: 'Product deleted' });
+});
+
 // Categories
 inventoryRoutes.get('/categories', async (c) => {
   const categories = await InventoryService.getAllCategories();

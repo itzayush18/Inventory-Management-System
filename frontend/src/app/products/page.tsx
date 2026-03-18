@@ -66,6 +66,16 @@ export default function ProductsPage() {
     }
   };
 
+  const handleDeleteProduct = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await api.delete(`/products/${id}`);
+      fetchInitialData();
+    } catch (err) {
+      console.error('Failed to delete product', err);
+    }
+  };
+
   const filteredProducts = products.filter((p: any) => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     p.sku.toLowerCase().includes(searchTerm.toLowerCase())
@@ -273,7 +283,10 @@ export default function ProductsPage() {
                             <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
                               <Edit2 size={16} />
                             </button>
-                            <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
+                            <button 
+                              onClick={() => handleDeleteProduct(p.id)}
+                              className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none transition-all text-slate-400 hover:text-white shadow-lg"
+                            >
                               <Trash2 size={16} />
                             </button>
                           </div>
