@@ -82,7 +82,7 @@ export default function LoginPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="input-field pl-12"
+                  className="input-field !pl-12"
                   placeholder="Username"
                   required
                 />
@@ -99,7 +99,7 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input-field pl-12"
+                  className="input-field !pl-12"
                   placeholder="••••••••"
                   required
                 />

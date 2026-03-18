@@ -258,34 +258,7 @@ export default function Dashboard() {
               </div>
             </motion.div>
 
-            <motion.div 
-               initial={{ opacity: 0, scale: 0.98 }}
-               animate={{ opacity: 1, scale: 1 }}
-               transition={{ delay: 0.3 }}
-               className="glass-card p-8"
-            >
-               <h3 className="font-black text-white mb-4 flex items-center gap-2">
-                 <AlertTriangle className="text-amber-500" size={18} />
-                 Inventory Health
-               </h3>
-               <div className="space-y-3">
-                 <div className="flex justify-between items-end">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Storage Capacity</span>
-                    <span className="text-sm font-black text-white">72%</span>
-                 </div>
-                 <div className="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-white/5 p-0.5">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: '72%' }}
-                      transition={{ duration: 1, delay: 0.5 }}
-                      className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full"
-                    />
-                 </div>
-                 <p className="text-[11px] text-slate-500 font-medium leading-relaxed mt-4">
-                    Automatic alerts will be sent when products hit their specified minimum stock levels.
-                 </p>
-               </div>
-            </motion.div>
+
           </div>
         </div>
       </main>
