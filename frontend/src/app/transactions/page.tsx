@@ -129,7 +129,7 @@ export default function TransactionsPage() {
                         </td>
                         <td className="px-6 py-4">
                           <p className="text-slate-400 font-medium italic border-l border-white/5 pl-3 max-w-xs truncate text-[11px]">
-                            {t.reference_id ? `Ref: ${t.reference_id}` : 'Operational adjustment'}
+                            {t.notes || (t.reference_id ? `Ref: ${t.reference_id}` : 'Operational adjustment')}
                           </p>
                         </td>
                       </motion.tr>

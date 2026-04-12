@@ -2,7 +2,7 @@ import pool from '../db';
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
 
 export class TransactionService {
-  static async recordStockTransaction(productId: number, userId: number, typeName: 'IN' | 'OUT' | 'RETURN' | 'DAMAGE', quantity: number, referenceId?: number) {
+  static async recordStockTransaction(productId: number, userId: number, typeName: 'IN' | 'OUT' | 'RETURN' | 'DAMAGE', quantity: number, notes?: string, referenceId?: number) {
     const connection = await pool.getConnection();
     try {
       await connection.beginTransaction();
@@ -14,22 +14,29 @@ export class TransactionService {
 
       // 2. Record transaction
       await connection.query(
-        'INSERT INTO stock_transactions (product_id, user_id, transaction_type_id, quantity, reference_id) VALUES (?, ?, ?, ?, ?)',
-        [productId, userId, typeId, quantity, referenceId || null]
+        'INSERT INTO stock_transactions (product_id, user_id, transaction_type_id, quantity, reference_id, notes) VALUES (?, ?, ?, ?, ?, ?)',
+        [productId, userId, typeId, quantity, referenceId || null, notes || null]
       );
 
       // 3. Update inventory levels
       const adjustment = (typeName === 'IN' || typeName === 'RETURN') ? quantity : -quantity;
       
-      // Find inventory ID for this product
+      // Find the inventory record for this product
       const [invRows]: any = await connection.query('SELECT id FROM inventory WHERE product_id = ?', [productId]);
       if (invRows.length > 0) {
         const inventoryId = invRows[0].id;
-        // Update Main Warehouse (id:1) by default for now
-        await connection.query(
-          'UPDATE inventory_levels SET stock_quantity = stock_quantity + ? WHERE inventory_id = ? AND location_id = 1',
-          [adjustment, inventoryId]
-        );
+        
+        // Find which location has this product's inventory level.
+        // For simplicity, we prioritize location_id = 1, but if not found, we pick any existing record for this inventory_id.
+        const [levelRows]: any = await connection.query('SELECT location_id FROM inventory_levels WHERE inventory_id = ? ORDER BY (location_id = 1) DESC LIMIT 1', [inventoryId]);
+        
+        if (levelRows.length > 0) {
+          const locId = levelRows[0].location_id;
+          await connection.query(
+            'UPDATE inventory_levels SET stock_quantity = stock_quantity + ? WHERE inventory_id = ? AND location_id = ?',
+            [adjustment, inventoryId, locId]
+          );
+        }
       }
 
       await connection.commit();

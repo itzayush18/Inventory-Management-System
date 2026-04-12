@@ -72,4 +72,25 @@ export class ReportsService {
     `);
     return rows;
   }
+
+  static async runLowStockProcedure() {
+    // This simulates an automated diagnostic procedure.
+    // In a real scenario, this might trigger emails, update tables, etc.
+    const criticalItems = await this.getCriticalStock();
+    
+    // Transform into "logs" for the frontend
+    const logs = criticalItems.map((item: any) => ({
+      timestamp: new Date().toISOString(),
+      action: `ALERT: Low stock detected for ${item.name} (${item.stock_quantity}/${item.min_stock_level})`
+    }));
+
+    if (logs.length === 0) {
+      logs.push({
+        timestamp: new Date().toISOString(),
+        action: 'System diagnostic completed: All stock levels healthy.'
+      });
+    }
+
+    return logs;
+  }
 }

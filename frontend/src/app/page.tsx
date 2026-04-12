@@ -195,19 +195,22 @@ export default function Dashboard() {
                     className="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/[0.08] transition-all group/item"
                   >
                     <div className="flex items-center gap-5">
-                      <div className={`p-3 rounded-xl ${activity.type === 'IN' ? 'bg-emerald-500/10 text-emerald-500 shadow-inner' : 'bg-rose-500/10 text-rose-500 shadow-inner'}`}>
-                        {activity.type === 'IN' ? <ArrowDownRight size={20} /> : <ArrowUpRight size={20} />}
+                      <div className={`p-3 rounded-xl ${activity.transaction_type === 'IN' || activity.transaction_type === 'RETURN' ? 'bg-emerald-500/10 text-emerald-500 shadow-inner' : 'bg-rose-500/10 text-rose-500 shadow-inner'}`}>
+                        {activity.transaction_type === 'IN' || activity.transaction_type === 'RETURN' ? <ArrowDownRight size={20} /> : <ArrowUpRight size={20} />}
                       </div>
                       <div>
                         <p className="font-black text-white group-hover/item:text-blue-400 transition-colors">{activity.product_name}</p>
                         <p className="text-xs text-slate-500 font-bold uppercase mt-1 tracking-tighter">
-                          {activity.type === 'IN' ? 'Inbound' : 'Outbound'} • {new Date(activity.timestamp).toLocaleDateString()} at {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {activity.transaction_type} • {new Date(activity.timestamp).toLocaleDateString()} at {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
+                        {activity.notes && (
+                          <p className="text-[10px] text-slate-400 italic mt-1 line-clamp-1 max-w-[200px]">"{activity.notes}"</p>
+                        )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className={`text-xl font-black ${activity.type === 'IN' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                        {activity.type === 'IN' ? '+' : '-'}{activity.quantity}
+                      <span className={`text-xl font-black ${activity.transaction_type === 'IN' || activity.transaction_type === 'RETURN' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                        {activity.transaction_type === 'IN' || activity.transaction_type === 'RETURN' ? '+' : '-'}{activity.quantity}
                       </span>
                       <p className="text-[10px] text-slate-600 font-bold uppercase mt-1">Units</p>
                     </div>
