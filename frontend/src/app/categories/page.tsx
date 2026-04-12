@@ -11,7 +11,8 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [formData, setFormData] = useState({ name: '', parent_id: '' });
 
   const fetchCategories = async () => {
     try {
@@ -28,36 +29,68 @@ export default function CategoriesPage() {
     fetchCategories();
   }, []);
 
-  const handleAddCategory = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.post('/categories', formData);
+      if (editingId) {
+        await api.patch(`/categories/${editingId}`, formData);
+      } else {
+        await api.post('/categories', {
+          name: formData.name,
+          parent_id: formData.parent_id || null
+        });
+      }
       setIsModalOpen(false);
+      setEditingId(null);
       fetchCategories();
-      setFormData({ name: '', description: '' });
+      setFormData({ name: '', parent_id: '' });
     } catch (err) {
-      console.error('Failed to add category', err);
+      console.error('Failed to save category', err);
+    }
+  };
+
+  const handleEdit = (category: any) => {
+    setEditingId(category.id);
+    setFormData({
+      name: category.name || '',
+      parent_id: category.parent_id || ''
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm('Delete this category? Products will lose this classification.')) {
+      try {
+        await api.delete(`/categories/${id}`);
+        fetchCategories();
+      } catch (err) {
+        console.error('Failed to delete category', err);
+      }
     }
   };
 
   return (
     <div className="flex bg-[#020617] min-h-screen text-slate-200">
       <Sidebar />
-      <main className="flex-1 p-10 overflow-y-auto">
+      <main className="flex-1 p-6 overflow-y-auto">
         <motion.header 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6"
+          className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
         >
           <div>
-            <div className="flex items-center gap-2 text-blue-500 font-bold text-xs mb-2 uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-blue-500 font-bold text-[10px] mb-1 uppercase tracking-widest">
                <Tags size={14} /> <span>TAXONOMY LOGS</span>
             </div>
-            <h1 className="text-5xl font-black text-white tracking-tight">Catalog Categories</h1>
-            <p className="text-slate-400 mt-2 text-lg font-medium">Systematic organization of your inventory assets.</p>
+            <h1 className="text-3xl font-black text-white tracking-tight">Catalog Categories</h1>
+            <p className="text-slate-400 mt-1 text-base font-medium">Systematic organization of your inventory assets.</p>
           </div>
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setEditingId(null);
+              setFormData({ name: '', parent_id: '' });
+              setIsModalOpen(true);
+            }}
             className="btn-primary flex items-center gap-2"
           >
             <Plus size={20} />
@@ -65,8 +98,8 @@ export default function CategoriesPage() {
           </button>
         </motion.header>
 
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="New Classification">
-          <form onSubmit={handleAddCategory} className="space-y-5">
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? "Modify Classification" : "New Classification"}>
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Label Name</label>
               <input 
@@ -78,17 +111,18 @@ export default function CategoriesPage() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Strategic Description</label>
-              <textarea 
-                rows={4}
-                className="input-field" 
-                placeholder="Define the scope of this category..."
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-              />
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Parent Category</label>
+              <select 
+                className="input-field"
+                value={formData.parent_id}
+                onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
+              >
+                <option value="" className="bg-[#0f172a]">None (Top Level)</option>
+                {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-[#0f172a]">{c.name}</option>)}
+              </select>
             </div>
             <button className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-black shadow-2xl shadow-blue-900/40 active:scale-[0.98] transition-all mt-4">
-              CONFIRM CLASSIFICATION
+              {editingId ? "UPDATE CLASSIFICATION" : "CONFIRM CLASSIFICATION"}
             </button>
           </form>
         </Modal>
@@ -112,27 +146,34 @@ export default function CategoriesPage() {
                   className="glass-card p-8 flex flex-col gap-6 group hover:border-blue-500/50 transition-all shadow-xl hover:shadow-blue-500/5"
                 >
                   <div className="flex justify-between items-start">
-                    <div className="p-4 rounded-2xl bg-blue-600/10 text-blue-500 border border-blue-500/20 group-hover:scale-110 transition-transform duration-500">
-                      <Tag size={28} />
+                    <div className="p-3 rounded-xl bg-blue-600/10 text-blue-500 border border-blue-500/20 group-hover:scale-110 transition-transform duration-500">
+                      <Tag size={24} />
                     </div>
                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                      <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none text-slate-400 hover:text-white transition-all shadow-lg">
-                        <Edit2 size={16} />
+                      <button 
+                        onClick={() => handleEdit(c)}
+                        className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none text-slate-400 hover:text-white transition-all shadow-lg"
+                      >
+                        <Edit2 size={14} />
                       </button>
-                      <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none text-slate-400 hover:text-white transition-all shadow-lg">
-                        <Trash2 size={16} />
+                      <button 
+                        onClick={() => handleDelete(c.id)}
+                        className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none text-slate-400 hover:text-white transition-all shadow-lg"
+                      >
+                        <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-2xl font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{c.name}</h3>
-                    <p className="text-slate-400 text-sm mt-3 font-medium leading-relaxed line-clamp-3 italic">
-                      {c.description || 'No descriptive protocol established for this group.'}
+                    <h3 className="text-xl font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{c.name}</h3>
+                    <p className="text-slate-400 text-[10px] mt-2 font-bold uppercase tracking-widest flex items-center gap-2">
+                       <Tags size={10} className="text-blue-500" />
+                       <span>{c.parent_name ? `Subcategory of ${c.parent_name}` : 'Root Classification'}</span>
                     </p>
                   </div>
                   <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
-                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Records Attached</span>
-                     <span className="text-sm font-black text-white bg-white/5 px-3 py-1 rounded-full border border-white/10">--</span>
+                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Record ID</span>
+                     <span className="text-sm font-black text-white bg-white/5 px-3 py-1 rounded-full border border-white/10">{c.id}</span>
                   </div>
                 </motion.div>
               ))

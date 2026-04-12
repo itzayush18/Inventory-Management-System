@@ -1,137 +1,215 @@
 CREATE DATABASE IF NOT EXISTS inventory_db;
 USE inventory_db;
 
-CREATE TABLE IF NOT EXISTS users (
+-- =========================
+-- USERS & ROLES
+-- =========================
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role ENUM('admin', 'shopkeeper') DEFAULT 'shopkeeper',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE user_roles (
+    user_id INT,
+    role_id INT,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS suppliers (
+-- =========================
+-- CATEGORIES (HIERARCHY)
+-- =========================
+CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    contact_person VARCHAR(100),
-    email VARCHAR(100),
-    phone VARCHAR(20),
+    parent_id INT NULL,
+    UNIQUE(name, parent_id),
+    FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+-- =========================
+-- SUPPLIERS (FULLY NORMALIZED)
+-- =========================
+CREATE TABLE suppliers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE supplier_addresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT,
     address TEXT,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+);
+
+CREATE TABLE supplier_contacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT,
+    contact_type VARCHAR(50), -- phone/email
+    value VARCHAR(100),
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+);
+
+-- =========================
+-- PRODUCTS (CORE)
+-- =========================
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS products (
+-- IDENTIFIERS (SKU, BARCODE)
+CREATE TABLE product_identifiers (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    sku VARCHAR(50) UNIQUE NOT NULL,
+    product_id INT,
+    sku VARCHAR(50) UNIQUE,
+    barcode VARCHAR(100),
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- MANY-TO-MANY CATEGORY
+CREATE TABLE product_category_map (
+    product_id INT,
     category_id INT,
+    PRIMARY KEY (product_id, category_id),
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+
+-- MANY-TO-MANY SUPPLIER
+CREATE TABLE product_supplier_map (
+    product_id INT,
     supplier_id INT,
-    description TEXT,
-    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
+    PRIMARY KEY (product_id, supplier_id),
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+);
+
+-- =========================
+-- PRODUCT ATTRIBUTES (ADVANCED 🔥)
+-- =========================
+CREATE TABLE attributes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE product_attribute_values (
+    product_id INT,
+    attribute_id INT,
+    value VARCHAR(100),
+    PRIMARY KEY (product_id, attribute_id),
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (attribute_id) REFERENCES attributes(id) ON DELETE CASCADE
+);
+
+-- =========================
+-- PRICE HISTORY
+-- =========================
+CREATE TABLE product_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+    effective_from TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- =========================
+-- LOCATIONS (WAREHOUSE SUPPORT)
+-- =========================
+CREATE TABLE locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+-- =========================
+-- INVENTORY (NORMALIZED)
+-- =========================
+CREATE TABLE inventory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+CREATE TABLE inventory_levels (
+    inventory_id INT,
+    location_id INT,
     stock_quantity INT DEFAULT 0 CHECK (stock_quantity >= 0),
     min_stock_level INT DEFAULT 5 CHECK (min_stock_level >= 0),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
-    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE SET NULL
+    PRIMARY KEY (inventory_id, location_id),
+    FOREIGN KEY (inventory_id) REFERENCES inventory(id) ON DELETE CASCADE,
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS user_transactions (
+-- =========================
+-- TRANSACTION TYPES
+-- =========================
+CREATE TABLE transaction_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    action TEXT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    name VARCHAR(50) UNIQUE NOT NULL -- IN, OUT, RETURN, DAMAGE
 );
 
-CREATE TABLE IF NOT EXISTS stock_transactions (
+-- =========================
+-- STOCK TRANSACTIONS
+-- =========================
+CREATE TABLE stock_transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT,
     user_id INT,
-    type ENUM('IN', 'OUT') NOT NULL,
+    transaction_type_id INT,
     quantity INT NOT NULL,
-    reason TEXT,
+    reference_id INT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (transaction_type_id) REFERENCES transaction_types(id)
+);
+
+-- =========================
+-- AUDIT LOGS (STRUCTURED)
+-- =========================
+CREATE TABLE audit_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    entity_type VARCHAR(50),
+    entity_id INT,
+    action_type VARCHAR(50),
+    old_value TEXT,
+    new_value TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE OR REPLACE VIEW comprehensive_product_view AS
+-- =========================
+-- VIEW (FOR EASY QUERYING)
+-- =========================
+CREATE OR REPLACE VIEW product_overview AS
 SELECT 
     p.id,
-    p.name AS product_name,
-    p.sku,
-    c.name AS category_name,
-    s.name AS supplier_name,
-    p.price,
-    p.stock_quantity,
-    p.min_stock_level
+    p.name,
+    pi.sku,
+    pp.price,
+    c.name AS category_name
 FROM products p
-LEFT JOIN categories c ON p.category_id = c.id
-LEFT JOIN suppliers s ON p.supplier_id = s.id;
-
-DELIMITER //
-
-DROP FUNCTION IF EXISTS calculate_inventory_value //
-CREATE FUNCTION calculate_inventory_value(prod_id INT) RETURNS DECIMAL(10,2)
-READS SQL DATA
-BEGIN
-    DECLARE total_val DECIMAL(10,2);
-    SELECT (price * stock_quantity) INTO total_val FROM products WHERE id = prod_id;
-    RETURN total_val;
-END //
-
-DROP TRIGGER IF EXISTS after_product_update //
-CREATE TRIGGER after_product_update 
-AFTER UPDATE ON products
-FOR EACH ROW
-BEGIN
-    IF NEW.stock_quantity < NEW.min_stock_level AND OLD.stock_quantity >= OLD.min_stock_level THEN
-        INSERT INTO user_transactions (user_id, action) 
-        VALUES (NULL, CONCAT('SYSTEM ALERT: Stock for product ', NEW.name, ' dropped below minimum level.'));
-    END IF;
-END //
-
-DROP PROCEDURE IF EXISTS process_low_stock_alerts //
-CREATE PROCEDURE process_low_stock_alerts()
-BEGIN
-    DECLARE done INT DEFAULT FALSE;
-    DECLARE p_id INT;
-    DECLARE p_name VARCHAR(200);
-    DECLARE p_stock INT;
-    DECLARE p_min INT;
-    
-    DECLARE cur_low_stock CURSOR FOR 
-        SELECT id, name, stock_quantity, min_stock_level 
-        FROM products 
-        WHERE stock_quantity < min_stock_level;
-        
-    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION 
-    BEGIN
-        INSERT INTO user_transactions (user_id, action) VALUES (NULL, 'ERROR: Exception caught during low stock processing.');
-    END;
-    
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-
-    OPEN cur_low_stock;
-    
-    read_loop: LOOP
-        FETCH cur_low_stock INTO p_id, p_name, p_stock, p_min;
-        IF done THEN
-            LEAVE read_loop;
-        END IF;
-        
-        INSERT INTO user_transactions (user_id, action) 
-        VALUES (NULL, CONCAT('PROCEDURE ALERT: Processed low stock for product: ', p_name, ' (ID: ', p_id, ')'));
-    END LOOP;
-    
-    CLOSE cur_low_stock;
-END //
-
-DELIMITER ;
+LEFT JOIN product_identifiers pi ON p.id = pi.product_id
+LEFT JOIN product_prices pp ON pp.id = (
+    SELECT id FROM product_prices WHERE product_id = p.id ORDER BY effective_from DESC, id DESC LIMIT 1
+)
+LEFT JOIN product_category_map pcm ON p.id = pcm.product_id
+LEFT JOIN categories c ON pcm.category_id = c.id;
+-- =========================
+-- INITIAL DATA
+-- =========================
+INSERT IGNORE INTO roles (role_name) VALUES ('admin'), ('shopkeeper');
+INSERT IGNORE INTO transaction_types (name) VALUES ('IN'), ('OUT'), ('RETURN'), ('DAMAGE');
+INSERT IGNORE INTO locations (name) VALUES ('Main Warehouse');
+INSERT IGNORE INTO attributes (name) VALUES ('Color'), ('Size'), ('Weight'), ('Material');

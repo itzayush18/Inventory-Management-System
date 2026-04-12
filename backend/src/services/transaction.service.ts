@@ -1,23 +1,36 @@
 import pool from '../db';
+import type { ResultSetHeader, RowDataPacket } from 'mysql2';
 
 export class TransactionService {
-  static async recordStockTransaction(productId: number, userId: number, type: 'IN' | 'OUT', quantity: number, reason: string) {
+  static async recordStockTransaction(productId: number, userId: number, typeName: 'IN' | 'OUT' | 'RETURN' | 'DAMAGE', quantity: number, referenceId?: number) {
     const connection = await pool.getConnection();
     try {
       await connection.beginTransaction();
 
-      // Record transaction
+      // 1. Get transaction type ID
+      const [typeRows]: any = await connection.query('SELECT id FROM transaction_types WHERE name = ?', [typeName]);
+      if (typeRows.length === 0) throw new Error('Invalid transaction type');
+      const typeId = typeRows[0].id;
+
+      // 2. Record transaction
       await connection.query(
-        'INSERT INTO stock_transactions (product_id, user_id, type, quantity, reason) VALUES (?, ?, ?, ?, ?)',
-        [productId, userId, type, quantity, reason]
+        'INSERT INTO stock_transactions (product_id, user_id, transaction_type_id, quantity, reference_id) VALUES (?, ?, ?, ?, ?)',
+        [productId, userId, typeId, quantity, referenceId || null]
       );
 
-      // Update product stock
-      const adjustment = type === 'IN' ? quantity : -quantity;
-      await connection.query(
-        'UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?',
-        [adjustment, productId]
-      );
+      // 3. Update inventory levels
+      const adjustment = (typeName === 'IN' || typeName === 'RETURN') ? quantity : -quantity;
+      
+      // Find inventory ID for this product
+      const [invRows]: any = await connection.query('SELECT id FROM inventory WHERE product_id = ?', [productId]);
+      if (invRows.length > 0) {
+        const inventoryId = invRows[0].id;
+        // Update Main Warehouse (id:1) by default for now
+        await connection.query(
+          'UPDATE inventory_levels SET stock_quantity = stock_quantity + ? WHERE inventory_id = ? AND location_id = 1',
+          [adjustment, inventoryId]
+        );
+      }
 
       await connection.commit();
     } catch (error) {
@@ -29,7 +42,18 @@ export class TransactionService {
   }
 
   static async getTransactions(limit?: number) {
-    let query = 'SELECT st.*, p.name as product_name, u.username FROM stock_transactions st JOIN products p ON st.product_id = p.id JOIN users u ON st.user_id = u.id ORDER BY st.timestamp DESC';
+    let query = `
+      SELECT 
+        st.*, 
+        p.name as product_name, 
+        u.username,
+        tt.name as transaction_type
+      FROM stock_transactions st 
+      JOIN products p ON st.product_id = p.id 
+      JOIN users u ON st.user_id = u.id 
+      JOIN transaction_types tt ON st.transaction_type_id = tt.id
+      ORDER BY st.timestamp DESC
+    `;
     if (limit) query += ` LIMIT ${limit}`;
     const [rows] = await pool.query(query);
     return rows;
@@ -37,11 +61,32 @@ export class TransactionService {
 
   static async getDashboardStats() {
     const [[totalProducts]]: any = await pool.query('SELECT COUNT(*) as count FROM products');
-    const [[lowStock]]: any = await pool.query('SELECT COUNT(*) as count FROM products WHERE stock_quantity <= min_stock_level');
-    const [[totalValue]]: any = await pool.query('SELECT SUM(price * stock_quantity) as value FROM products');
-    const [recentActivities]: any = await pool.query(
-      'SELECT st.*, p.name as product_name FROM stock_transactions st JOIN products p ON st.product_id = p.id ORDER BY st.timestamp DESC LIMIT 5'
-    );
+    
+    const [[lowStock]]: any = await pool.query(`
+      SELECT COUNT(*) as count 
+      FROM inventory_levels il
+      WHERE il.stock_quantity <= il.min_stock_level
+    `);
+
+    const [[totalValue]]: any = await pool.query(`
+      SELECT SUM(pp.price * il.stock_quantity) as value 
+      FROM product_prices pp
+      JOIN inventory i ON pp.product_id = i.product_id
+      JOIN inventory_levels il ON i.id = il.inventory_id
+      WHERE pp.id IN (SELECT MAX(id) FROM product_prices GROUP BY product_id)
+    `);
+
+    const [recentActivities]: any = await pool.query(`
+      SELECT 
+        st.*, 
+        p.name as product_name,
+        tt.name as transaction_type
+      FROM stock_transactions st 
+      JOIN products p ON st.product_id = p.id 
+      JOIN transaction_types tt ON st.transaction_type_id = tt.id
+      ORDER BY st.timestamp DESC 
+      LIMIT 5
+    `);
 
     return {
       totalProducts: totalProducts.count,

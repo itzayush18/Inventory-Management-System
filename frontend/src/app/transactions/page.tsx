@@ -27,17 +27,17 @@ export default function TransactionsPage() {
   return (
     <div className="flex bg-[#020617] min-h-screen text-slate-200">
       <Sidebar />
-      <main className="flex-1 p-10 overflow-y-auto">
+      <main className="flex-1 p-6 overflow-y-auto">
         <motion.header 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="mb-8"
         >
-          <div className="flex items-center gap-2 text-blue-500 font-bold text-xs mb-2 uppercase tracking-widest">
-             <ShieldCheck size={14} /> <span>Audit Protocol</span>
+          <div className="flex items-center gap-2 text-blue-500 font-bold text-[10px] mb-1 uppercase tracking-widest">
+              <ShieldCheck size={14} /> <span>AUDIT PROTOCOL</span>
           </div>
-          <h1 className="text-5xl font-black text-white tracking-tight">Stock Ledger</h1>
-          <p className="text-slate-400 mt-2 text-lg font-medium">Complete immutable history of every inventory movement.</p>
+          <h1 className="text-3xl font-black text-white tracking-tight">Stock Ledger</h1>
+          <p className="text-slate-400 mt-1 text-base font-medium">Complete immutable history of every inventory movement.</p>
         </motion.header>
 
         <motion.div 
@@ -45,13 +45,13 @@ export default function TransactionsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="glass-card overflow-hidden"
         >
-          <div className="p-8 border-b border-white/5 flex flex-col md:flex-row gap-6 justify-between items-center bg-white/[0.02]">
-            <div className="relative w-full md:w-96 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={20} />
+          <div className="p-6 border-b border-white/5 flex flex-col md:flex-row gap-6 justify-between items-center bg-white/[0.02]">
+            <div className="relative w-full md:w-80 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={18} />
               <input
                 type="text"
                 placeholder="Filter ledger by asset or user..."
-                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-semibold"
+                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-semibold"
               />
             </div>
           </div>
@@ -60,12 +60,12 @@ export default function TransactionsPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-900/80 text-slate-500 text-[10px] uppercase tracking-[0.2em] font-black">
-                  <th className="px-8 py-5">Transaction ID & Type</th>
-                  <th className="px-8 py-5">Asset</th>
-                  <th className="px-8 py-5">Volume</th>
-                  <th className="px-8 py-5">Authority</th>
-                  <th className="px-8 py-5">Execution Date</th>
-                  <th className="px-8 py-5">Justification</th>
+                  <th className="px-6 py-4">Transaction ID & Type</th>
+                  <th className="px-6 py-4">Asset</th>
+                  <th className="px-6 py-4">Volume</th>
+                  <th className="px-6 py-4">Authority</th>
+                  <th className="px-6 py-4">Execution Date</th>
+                  <th className="px-6 py-4">Justification</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-sm">
@@ -92,44 +92,44 @@ export default function TransactionsPage() {
                         key={t.id} 
                         className="hover:bg-white/[0.03] transition-colors group"
                       >
-                        <td className="px-8 py-5">
+                        <td className="px-6 py-4">
                           <div className="flex items-center gap-4">
-                            <div className={`p-2.5 rounded-xl ${t.type === 'IN' ? 'bg-emerald-500/10 text-emerald-500 shadow-inner' : 'bg-rose-500/10 text-rose-500 shadow-inner'}`}>
-                               {t.type === 'IN' ? <ArrowDownRight size={18} /> : <ArrowUpRight size={18} />}
+                            <div className={`p-2 rounded-lg ${t.transaction_type === 'IN' || t.transaction_type === 'RETURN' ? 'bg-emerald-500/10 text-emerald-500 shadow-inner' : 'bg-rose-500/10 text-rose-500 shadow-inner'}`}>
+                               {t.transaction_type === 'IN' || t.transaction_type === 'RETURN' ? <ArrowDownRight size={16} /> : <ArrowUpRight size={16} />}
                             </div>
                             <div>
-                               <div className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">TRX-{t.id}</div>
-                               <div className={`font-black text-sm ${t.type === 'IN' ? 'text-emerald-500' : 'text-rose-500'}`}>{t.type === 'IN' ? 'RECEIPT' : 'DISPATCH'}</div>
+                               <div className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">TRX-{t.id}</div>
+                               <div className={`font-black text-xs ${t.transaction_type === 'IN' || t.transaction_type === 'RETURN' ? 'text-emerald-500' : 'text-rose-500'}`}>{t.transaction_type}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-5 font-extrabold text-white text-base group-hover:text-blue-400 transition-colors uppercase tracking-tight">{t.product_name}</td>
-                        <td className="px-8 py-5">
-                          <span className="font-black text-lg font-mono">{t.type === 'IN' ? '+' : '-'}{t.quantity}</span>
-                          <span className="ml-1 text-[10px] font-bold text-slate-600">UNITS</span>
+                        <td className="px-6 py-4 font-extrabold text-white text-sm group-hover:text-blue-400 transition-colors uppercase tracking-tight">{t.product_name}</td>
+                        <td className="px-6 py-4">
+                          <span className="font-black text-base font-mono">{t.transaction_type === 'IN' || t.transaction_type === 'RETURN' ? '+' : '-'}{t.quantity}</span>
+                          <span className="ml-1 text-[9px] font-bold text-slate-600">UNITS</span>
                         </td>
-                        <td className="px-8 py-5">
-                          <div className="flex items-center gap-3 text-slate-300 font-bold">
-                             <div className="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-500/20 flex items-center justify-center">
-                                <User size={14} className="text-blue-500" />
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 text-slate-300 font-bold text-xs">
+                             <div className="w-6 h-6 rounded bg-blue-600/10 border border-blue-500/20 flex items-center justify-center">
+                                <User size={12} className="text-blue-500" />
                              </div>
                              {t.username}
                           </div>
                         </td>
-                        <td className="px-8 py-5">
+                        <td className="px-6 py-4">
                           <div className="flex flex-col text-slate-500 font-bold">
-                            <div className="flex items-center gap-2 text-white/80 text-xs">
-                              <Calendar size={12} className="text-blue-500" />
+                            <div className="flex items-center gap-2 text-white/80 text-[10px]">
+                              <Calendar size={10} className="text-blue-500" />
                               {new Date(t.timestamp).toLocaleDateString()}
                             </div>
-                            <div className="text-[10px] mt-1 ml-5 tracking-tighter opacity-60">
-                              {new Date(t.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                            <div className="text-[9px] mt-0.5 ml-4 tracking-tighter opacity-60">
+                              {new Date(t.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-5">
-                          <p className="text-slate-400 font-medium italic border-l-2 border-white/5 pl-4 max-w-xs truncate">
-                            {t.reason || 'Operational adjustment'}
+                        <td className="px-6 py-4">
+                          <p className="text-slate-400 font-medium italic border-l border-white/5 pl-3 max-w-xs truncate text-[11px]">
+                            {t.reference_id ? `Ref: ${t.reference_id}` : 'Operational adjustment'}
                           </p>
                         </td>
                       </motion.tr>

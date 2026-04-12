@@ -19,7 +19,15 @@ export default function SuppliersPage() {
   const fetchSuppliers = async () => {
     try {
       const res = await api.get('/suppliers');
-      setSuppliers(res.data);
+      // Normalize for frontend state if needed
+      const normalizedData = res.data.map((s: any) => ({
+        ...s,
+        contact_person: s.contacts?.find((c: any) => c.contact_type === 'person')?.value || '',
+        email: s.contacts?.find((c: any) => c.contact_type === 'email')?.value || '',
+        phone: s.contacts?.find((c: any) => c.contact_type === 'phone')?.value || '',
+        address: s.addresses?.[0] || ''
+      }));
+      setSuppliers(normalizedData);
     } catch (err) {
       console.error('Failed to fetch suppliers', err);
     } finally {
@@ -33,11 +41,21 @@ export default function SuppliersPage() {
 
   const handleAddSupplier = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      name: formData.name,
+      addresses: [formData.address],
+      contacts: [
+        { type: 'person', value: formData.contact_person },
+        { type: 'email', value: formData.email },
+        { type: 'phone', value: formData.phone }
+      ].filter(c => c.value)
+    };
+
     try {
       if (editingId) {
-        await api.patch(`/suppliers/${editingId}`, formData);
+        await api.patch(`/suppliers/${editingId}`, payload);
       } else {
-        await api.post('/suppliers', formData);
+        await api.post('/suppliers', payload);
       }
       setIsModalOpen(false);
       fetchSuppliers();
@@ -74,18 +92,18 @@ export default function SuppliersPage() {
   return (
     <div className="flex bg-[#020617] min-h-screen text-slate-200">
       <Sidebar />
-      <main className="flex-1 p-10 overflow-y-auto">
+      <main className="flex-1 p-6 overflow-y-auto">
         <motion.header 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6"
+          className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
         >
           <div>
-            <div className="flex items-center gap-2 text-emerald-500 font-bold text-xs mb-2 uppercase tracking-widest">
-               <Truck size={14} /> <span>Logistics Network</span>
+            <div className="flex items-center gap-2 text-emerald-500 font-bold text-[10px] mb-1 uppercase tracking-widest">
+               <Truck size={14} /> <span>LOGISTICS NETWORK</span>
             </div>
-            <h1 className="text-5xl font-black text-white tracking-tight">Supply Partners</h1>
-            <p className="text-slate-400 mt-2 text-lg font-medium">Manage your upstream communication and vendor protocols.</p>
+            <h1 className="text-3xl font-black text-white tracking-tight">Supply Partners</h1>
+            <p className="text-slate-400 mt-1 text-base font-medium">Manage your upstream communication and vendor protocols.</p>
           </div>
           <button 
             onClick={() => {
@@ -192,21 +210,11 @@ export default function SuppliersPage() {
                       </button>
                   </div>
 
-                  <div className="flex items-center gap-6 mb-8">
-                    <div className="p-5 rounded-3xl bg-emerald-600/10 text-emerald-500 border border-emerald-500/20 group-hover:scale-110 transition-transform duration-500 shadow-inner">
-                      <Truck size={36} />
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="p-4 rounded-2xl bg-emerald-600/10 text-emerald-500 border border-emerald-500/20 group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                      <Truck size={28} />
                     </div>
                     <div>
-                      <h3 className="text-3xl font-black text-white group-hover:text-emerald-400 transition-colors tracking-tight">{s.name}</h3>
-                      <div className="flex items-center gap-2 mt-1.5 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
-                         <UserCheck size={12} className="text-emerald-500" />
-                         <span>Agent: {s.contact_person || 'Anonymous'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
                       <div className="flex items-center gap-4 group/item">
                         <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-blue-500/20 group-hover/item:text-blue-500 transition-all">
                            <Mail size={18} />
