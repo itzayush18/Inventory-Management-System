@@ -20,19 +20,19 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-lg glass-card p-0 overflow-hidden shadow-2xl border border-slate-700/50"
+            className="relative w-full max-w-lg glass-card p-0 overflow-hidden shadow-2xl border border-slate-200"
           >
-            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-              <h2 className="text-xl font-bold text-white">{title}</h2>
+            <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-white">
+              <h2 className="text-xl font-bold text-slate-900">{title}</h2>
               <button 
                 onClick={onClose}
-                className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-all"
+                className="p-2 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-all"
               >
                 <X size={20} />
               </button>

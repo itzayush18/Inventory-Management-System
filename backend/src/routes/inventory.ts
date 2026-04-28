@@ -77,12 +77,26 @@ inventoryRoutes.delete('/suppliers/:id', async (c) => {
 // Stock Transactions
 inventoryRoutes.post('/stock-transactions', async (c) => {
   try {
-    const { productId, type, quantity, reason } = await c.req.json();
+    const body = await c.req.json();
+    const productId = Number(body.productId);
+    const type = body.type;
+    const quantity = Number(body.quantity);
+    const reason = body.reason;
+
+    if (!productId || !type || !Number.isFinite(quantity) || quantity <= 0) {
+      return c.json({ error: 'Invalid input for stock transaction' }, 400);
+    }
+
     const user = c.get('jwtPayload');
+    if (!user || !user.id) return c.json({ error: 'Unauthorized' }, 401);
+
     await TransactionService.recordStockTransaction(productId, user.id, type, quantity, reason);
     return c.json({ message: 'Stock updated successfully' });
   } catch (error) {
     console.error(error);
+    if (error instanceof Error && error.message === 'Insufficient stock') {
+      return c.json({ error: 'Insufficient stock for this operation' }, 400);
+    }
     return c.json({ error: 'Failed to update stock' }, 500);
   }
 });

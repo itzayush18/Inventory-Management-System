@@ -70,7 +70,7 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="flex bg-[#020617] min-h-screen text-slate-200">
+    <div className="flex bg-[#f8fafc] min-h-screen text-slate-900">
       <Sidebar />
       <main className="flex-1 p-6 overflow-y-auto">
         <motion.header 
@@ -82,7 +82,7 @@ export default function CategoriesPage() {
             <div className="flex items-center gap-2 text-blue-500 font-bold text-[10px] mb-1 uppercase tracking-widest">
                <Tags size={14} /> <span>TAXONOMY LOGS</span>
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight">Catalog Categories</h1>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Catalog Categories</h1>
             <p className="text-slate-400 mt-1 text-base font-medium">Systematic organization of your inventory assets.</p>
           </div>
           <button 
@@ -101,7 +101,7 @@ export default function CategoriesPage() {
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? "Modify Classification" : "New Classification"}>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Label Name</label>
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Label Name</label>
               <input 
                 required
                 className="input-field" 
@@ -111,14 +111,14 @@ export default function CategoriesPage() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Parent Category</label>
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Parent Category</label>
               <select 
                 className="input-field"
                 value={formData.parent_id}
                 onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
               >
-                <option value="" className="bg-[#0f172a]">None (Top Level)</option>
-                {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-[#0f172a]">{c.name}</option>)}
+                <option value="" className="bg-white text-slate-900">None (Top Level)</option>
+                {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-white text-slate-900">{c.name}</option>)}
               </select>
             </div>
             <button className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-black shadow-2xl shadow-blue-900/40 active:scale-[0.98] transition-all mt-4">
@@ -152,20 +152,20 @@ export default function CategoriesPage() {
                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
                       <button 
                         onClick={() => handleEdit(c)}
-                        className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none text-slate-400 hover:text-white transition-all shadow-lg"
+                        className="p-2 rounded-lg bg-blue-100 border border-blue-300 hover:bg-blue-600 border-none text-blue-700 hover:text-white transition-all shadow-lg"
                       >
                         <Edit2 size={14} />
                       </button>
                       <button 
                         onClick={() => handleDelete(c.id)}
-                        className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none text-slate-400 hover:text-white transition-all shadow-lg"
+                        className="p-2 rounded-lg bg-rose-100 border border-rose-300 hover:bg-rose-600 border-none text-rose-700 hover:text-white transition-all shadow-lg"
                       >
                         <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{c.name}</h3>
+                    <h3 className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{c.name}</h3>
                     <p className="text-slate-400 text-[10px] mt-2 font-bold uppercase tracking-widest flex items-center gap-2">
                        <Tags size={10} className="text-blue-500" />
                        <span>{c.parent_name ? `Subcategory of ${c.parent_name}` : 'Root Classification'}</span>
@@ -173,7 +173,7 @@ export default function CategoriesPage() {
                   </div>
                   <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Record ID</span>
-                     <span className="text-sm font-black text-white bg-white/5 px-3 py-1 rounded-full border border-white/10">{c.id}</span>
+                     <span className="text-sm font-black text-slate-900 bg-slate-200 px-3 py-1 rounded-full border border-slate-300">{c.id}</span>
                   </div>
                 </motion.div>
               ))

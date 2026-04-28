@@ -25,7 +25,7 @@ export default function TransactionsPage() {
   }, []);
 
   return (
-    <div className="flex bg-[#020617] min-h-screen text-slate-200">
+    <div className="flex bg-[#f8fafc] min-h-screen text-slate-900">
       <Sidebar />
       <main className="flex-1 p-6 overflow-y-auto">
         <motion.header 
@@ -36,8 +36,8 @@ export default function TransactionsPage() {
           <div className="flex items-center gap-2 text-blue-500 font-bold text-[10px] mb-1 uppercase tracking-widest">
               <ShieldCheck size={14} /> <span>AUDIT PROTOCOL</span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Stock Ledger</h1>
-          <p className="text-slate-400 mt-1 text-base font-medium">Complete immutable history of every inventory movement.</p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Stock Ledger</h1>
+          <p className="text-slate-600 mt-1 text-base font-medium">Complete immutable history of every inventory movement.</p>
         </motion.header>
 
         <motion.div 
@@ -45,13 +45,13 @@ export default function TransactionsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="glass-card overflow-hidden"
         >
-          <div className="p-6 border-b border-white/5 flex flex-col md:flex-row gap-6 justify-between items-center bg-white/[0.02]">
+          <div className="p-6 border-b border-slate-200 flex flex-col md:flex-row gap-6 justify-between items-center bg-slate-50">
             <div className="relative w-full md:w-80 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={18} />
               <input
                 type="text"
                 placeholder="Filter ledger by asset or user..."
-                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-semibold"
+                className="w-full bg-white border border-slate-300 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-semibold"
               />
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function TransactionsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-900/80 text-slate-500 text-[10px] uppercase tracking-[0.2em] font-black">
+                <tr className="bg-slate-100 text-slate-700 text-[10px] uppercase tracking-[0.2em] font-black">
                   <th className="px-6 py-4">Transaction ID & Type</th>
                   <th className="px-6 py-4">Asset</th>
                   <th className="px-6 py-4">Volume</th>
@@ -68,7 +68,7 @@ export default function TransactionsPage() {
                   <th className="px-6 py-4">Justification</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-sm">
+              <tbody className="divide-y divide-slate-200 text-xs">
                 <AnimatePresence>
                   {loading ? (
                     <tr>
@@ -103,7 +103,7 @@ export default function TransactionsPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 font-extrabold text-white text-sm group-hover:text-blue-400 transition-colors uppercase tracking-tight">{t.product_name}</td>
+                        <td className="px-6 py-4 font-extrabold text-slate-900 text-sm group-hover:text-blue-600 transition-colors uppercase tracking-tight">{t.product_name}</td>
                         <td className="px-6 py-4">
                           <span className="font-black text-base font-mono">{t.transaction_type === 'IN' || t.transaction_type === 'RETURN' ? '+' : '-'}{t.quantity}</span>
                           <span className="ml-1 text-[9px] font-bold text-slate-600">UNITS</span>
@@ -118,7 +118,7 @@ export default function TransactionsPage() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-col text-slate-500 font-bold">
-                            <div className="flex items-center gap-2 text-white/80 text-[10px]">
+                            <div className="flex items-center gap-2 text-slate-700 text-[10px]">
                               <Calendar size={10} className="text-blue-500" />
                               {new Date(t.timestamp).toLocaleDateString()}
                             </div>
@@ -128,7 +128,7 @@ export default function TransactionsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-slate-400 font-medium italic border-l border-white/5 pl-3 max-w-xs truncate text-[11px]">
+                          <p className="text-slate-600 font-medium italic border-l border-slate-300 pl-3 max-w-xs truncate text-[11px]">
                             {t.notes || (t.reference_id ? `Ref: ${t.reference_id}` : 'Operational adjustment')}
                           </p>
                         </td>

@@ -32,10 +32,21 @@ export class TransactionService {
         
         if (levelRows.length > 0) {
           const locId = levelRows[0].location_id;
-          await connection.query(
-            'UPDATE inventory_levels SET stock_quantity = stock_quantity + ? WHERE inventory_id = ? AND location_id = ?',
-            [adjustment, inventoryId, locId]
-          );
+            // Check current stock to prevent negative inventory (DB also enforces CHECK)
+            const [currentRows]: any = await connection.query(
+              'SELECT stock_quantity FROM inventory_levels WHERE inventory_id = ? AND location_id = ?',
+              [inventoryId, locId]
+            );
+            const currentStock = currentRows.length > 0 ? Number(currentRows[0].stock_quantity) : 0;
+            const newStock = currentStock + adjustment;
+            if (newStock < 0) {
+              throw new Error('Insufficient stock');
+            }
+
+            await connection.query(
+              'UPDATE inventory_levels SET stock_quantity = stock_quantity + ? WHERE inventory_id = ? AND location_id = ?',
+              [adjustment, inventoryId, locId]
+            );
         }
       }
 

@@ -53,7 +53,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="flex bg-[#020617] min-h-screen text-slate-200">
+    <div className="flex bg-[#f8fafc] min-h-screen text-slate-900">
       <Sidebar />
       <main className="flex-1 p-10 overflow-y-auto w-full">
         <motion.header 
@@ -65,7 +65,7 @@ export default function ReportsPage() {
             <div className="flex items-center gap-2 text-rose-500 font-bold text-xs mb-2 uppercase tracking-widest">
                <Database size={14} /> <span>System Reports</span>
             </div>
-            <h1 className="text-5xl font-black text-white tracking-tight">System Intelligence</h1>
+            <h1 className="text-5xl font-black text-slate-900 tracking-tight">System Intelligence</h1>
             <p className="text-slate-400 mt-2 text-lg font-medium">Comprehensive insights and automated diagnostics for your inventory.</p>
           </div>
         </motion.header>
@@ -80,40 +80,40 @@ export default function ReportsPage() {
             
             {/* Section 1: Aggregate Functions & Views */}
             <section>
-              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-white border-b border-white/10 pb-3">
+              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900 border-b border-slate-200 pb-3">
                  <TrendingUp className="text-emerald-500" size={24}/>
                  Overall Inventory Statistics
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="glass-card p-6 bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors border-emerald-500/20 w-full">
                   <div className="text-emerald-500/80 uppercase text-xs font-black tracking-widest mb-2">Total Assets</div>
-                  <div className="text-xl lg:text-2xl font-black text-white break-words">{stats?.overall?.total_products || 0}</div>
+                  <div className="text-xl lg:text-2xl font-black text-slate-900 break-words">{stats?.overall?.total_products || 0}</div>
                 </div>
                 <div className="glass-card p-6 bg-blue-500/5 hover:bg-blue-500/10 transition-colors border-blue-500/20 w-full">
                   <div className="text-blue-500/80 uppercase text-xs font-black tracking-widest mb-2">Total Stock</div>
-                  <div className="text-xl lg:text-2xl font-black text-white break-words">{stats?.overall?.total_stock || 0}</div>
+                  <div className="text-xl lg:text-2xl font-black text-slate-900 break-words">{stats?.overall?.total_stock || 0}</div>
                 </div>
                 <div className="glass-card p-6 bg-amber-500/5 hover:bg-amber-500/10 transition-colors border-amber-500/20 w-full">
                   <div className="text-amber-500/80 uppercase text-xs font-black tracking-widest mb-2">Avg Price</div>
-                  <div className="text-xl lg:text-2xl font-black text-white break-words">₹{Number(stats?.overall?.average_price || 0).toFixed(2)}</div>
+                  <div className="text-xl lg:text-2xl font-black text-amber-700 break-words">₹{Number(stats?.overall?.average_price || 0).toFixed(2)}</div>
                 </div>
                 <div className="glass-card p-6 bg-purple-500/5 hover:bg-purple-500/10 transition-colors border-purple-500/20 w-full">
                   <div className="text-purple-500/80 uppercase text-xs font-black tracking-widest mb-2">Total Value</div>
-                  <div className="text-xl lg:text-2xl font-black text-white break-words">₹{Number(stats?.overall?.total_inventory_value || 0).toFixed(2)}</div>
+                  <div className="text-xl lg:text-2xl font-black text-purple-700 break-words">₹{Number(stats?.overall?.total_inventory_value || 0).toFixed(2)}</div>
                 </div>
               </div>
             </section>
 
             {/* Section 2: Set Operations (UNION) */}
             <section>
-              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-white border-b border-white/10 pb-3">
+              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900 border-b border-slate-200 pb-3">
                  <AlertTriangle className="text-rose-500" size={24}/>
                  Critical Stock Alerts
               </h2>
               <div className="glass-card p-1">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-900/80 text-rose-500 text-[10px] uppercase tracking-[0.2em] font-black">
+                    <tr className="bg-slate-100 text-slate-700 text-[10px] uppercase tracking-[0.2em] font-black">
                       <th className="px-6 py-4">Alert Type</th>
                       <th className="px-6 py-4">Product Name</th>
                       <th className="px-6 py-4">Stock</th>
@@ -129,7 +129,7 @@ export default function ReportsPage() {
                           <td className="px-6 py-4">
                              <span className="px-2 py-1 rounded bg-rose-500/10 text-rose-500 text-[10px] font-black">{item.alert_type}</span>
                           </td>
-                          <td className="px-6 py-4 font-bold text-white">{item.name}</td>
+                          <td className="px-6 py-4 font-bold text-slate-900">{item.name}</td>
                           <td className="px-6 py-4 font-mono text-rose-400">{item.stock_quantity}</td>
                           <td className="px-6 py-4 font-mono text-slate-500">{item.min_stock_level}</td>
                         </tr>
@@ -142,7 +142,7 @@ export default function ReportsPage() {
 
             {/* Section 3: Subqueries */}
             <section>
-              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-white border-b border-white/10 pb-3">
+              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900 border-b border-slate-200 pb-3">
                  <Zap className="text-amber-500" size={24}/>
                  Premium Products (Above Average Price)
               </h2>
@@ -150,8 +150,8 @@ export default function ReportsPage() {
                  {premiumProducts.map((p: any) => (
                    <div key={p.id} className="glass-card p-5 border border-amber-500/20 bg-amber-500/5 min-w-[250px] flex-1">
                       <div className="text-amber-500 uppercase text-[10px] font-black tracking-widest mb-1">Premium Item</div>
-                      <div className="text-lg font-black text-white">{p.name}</div>
-                      <div className="text-2xl font-black text-white mt-3">₹{Number(p.price).toFixed(2)}</div>
+                      <div className="text-lg font-black text-slate-900">{p.name}</div>
+                      <div className="text-2xl font-black text-amber-700 mt-3">₹{Number(p.price).toFixed(2)}</div>
                    </div>
                  ))}
                  {premiumProducts.length === 0 && <div className="text-slate-500 font-bold">No items match the premium conditions.</div>}
@@ -160,14 +160,14 @@ export default function ReportsPage() {
 
             {/* Section 4: Views */}
             <section>
-              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-white border-b border-white/10 pb-3">
+              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900 border-b border-slate-200 pb-3">
                  <TableIcon className="text-blue-500" size={24}/>
                  Comprehensive Product Directory
               </h2>
               <div className="glass-card p-1 overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[800px]">
                   <thead>
-                    <tr className="bg-slate-900/80 text-blue-500 text-[10px] uppercase tracking-[0.2em] font-black">
+                    <tr className="bg-slate-100 text-slate-700 text-[10px] uppercase tracking-[0.2em] font-black">
                       <th className="px-6 py-4">ID / SKU</th>
                       <th className="px-6 py-4">Product Name</th>
                       <th className="px-6 py-4">Category</th>
@@ -177,9 +177,9 @@ export default function ReportsPage() {
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
                     {comprehensiveView.map((item: any, i: number) => (
-                      <tr key={i} className="hover:bg-white/[0.02]">
+                      <tr key={i} className="hover:bg-slate-100">
                         <td className="px-6 py-4 font-mono text-slate-500 max-w-[100px] truncate">{item.sku}</td>
-                        <td className="px-6 py-4 font-bold text-white max-w-[200px] truncate">{item.product_name}</td>
+                        <td className="px-6 py-4 font-bold text-slate-900 max-w-[200px] truncate">{item.product_name}</td>
                         <td className="px-6 py-4">
                            <span className="px-2 py-1 bg-white/5 border border-white/10 rounded">{item.category_name || 'N/A'}</span>
                         </td>
@@ -194,14 +194,14 @@ export default function ReportsPage() {
 
             {/* Section 5: Procedures */}
             <section>
-              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-white border-b border-white/10 pb-3">
+              <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900 border-b border-slate-200 pb-3">
                  <Activity className="text-purple-500" size={24}/>
                  Automated Stock Processing
               </h2>
               <div className="glass-card p-8 bg-purple-500/5 border-purple-500/20 text-center md:text-left flex flex-col md:flex-row gap-8 items-center justify-between">
                  <div className="max-w-xl">
-                    <h3 className="text-2xl font-black text-white mb-2">Process Low Stock Diagnostics</h3>
-                    <p className="text-slate-400 font-medium">Automatically iterates over low stock items, generating necessary diagnostic logs and alerts for seamless inventory management.</p>
+                    <h3 className="text-2xl font-black text-slate-900 mb-2">Process Low Stock Diagnostics</h3>
+                    <p className="text-slate-600 font-medium">Automatically iterates over low stock items, generating necessary diagnostic logs and alerts for seamless inventory management.</p>
                  </div>
                  <button 
                     className="btn-primary bg-purple-600 hover:bg-purple-500 shadow-purple-900/40 px-8 py-4 whitespace-nowrap flex items-center gap-3"
@@ -214,13 +214,13 @@ export default function ReportsPage() {
               </div>
 
               {procLogs.length > 0 && (
-                <div className="mt-6 glass-card p-6 border-slate-700 bg-slate-900">
-                    <h4 className="text-slate-500 font-bold uppercase text-[10px] tracking-widest mb-4">Latest Automated Stock Logs</h4>
+                <div className="mt-6 glass-card p-6 border-slate-300 bg-slate-50">
+                    <h4 className="text-slate-600 font-bold uppercase text-[10px] tracking-widest mb-4">Latest Automated Stock Logs</h4>
                     <div className="space-y-3">
                        {procLogs.map((log: any, i) => (
-                          <div key={i} className="flex gap-4 items-center bg-black/20 p-3 flex-wrap rounded-lg">
-                             <div className="text-[10px] font-mono text-slate-600">{new Date(log.timestamp).toLocaleString()}</div>
-                             <div className="font-mono text-sm text-purple-400">{log.action}</div>
+                          <div key={i} className="flex gap-4 items-center bg-slate-100 p-3 flex-wrap rounded-lg">
+                             <div className="text-[10px] font-mono text-slate-500">{new Date(log.timestamp).toLocaleString()}</div>
+                             <div className="font-mono text-sm text-purple-600">{log.action}</div>
                           </div>
                        ))}
                     </div>

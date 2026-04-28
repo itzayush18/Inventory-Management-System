@@ -31,7 +31,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6 selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6 selection:bg-blue-500/30">
       {/* Background blobs for premium feel */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"></div>
@@ -51,8 +51,8 @@ export default function LoginPage() {
           >
             <Box className="text-white" size={40} />
           </motion.div>
-          <h1 className="text-5xl font-black text-white tracking-tight mb-2">Stock<span className="text-blue-500">Flux</span></h1>
-          <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-xs">Enterprise Security Terminal</p>
+          <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-2">Stock<span className="text-blue-600\">Flux</span></h1>
+          <p className="text-slate-600 font-bold uppercase tracking-[0.2em] text-xs\">Enterprise Security Terminal</p>
         </div>
 
         <div className="glass-card p-10 relative overflow-hidden">
@@ -116,7 +116,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-10 pt-8 border-t border-white/5 text-center">
+          <div className="mt-10 pt-8 border-t border-slate-300 text-center">
             <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
               Restricted Area • <a href="#" className="text-blue-500 hover:text-blue-400">Request Credentials</a>
             </p>

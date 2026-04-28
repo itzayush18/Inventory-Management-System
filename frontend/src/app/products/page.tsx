@@ -100,13 +100,15 @@ export default function ProductsPage() {
     }
   };
 
-  const filteredProducts = products.filter((p: any) => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    p.sku.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const q = (searchTerm || '').toLowerCase();
+  const filteredProducts = products.filter((p: any) => {
+    const name = String(p?.name || '').toLowerCase();
+    const sku = String(p?.sku || '').toLowerCase();
+    return name.includes(q) || sku.includes(q);
+  });
 
   return (
-    <div className="flex bg-[#020617] min-h-screen text-slate-200">
+    <div className="flex bg-[#f8fafc] min-h-screen text-slate-900">
       <Sidebar />
       <main className="flex-1 p-6 overflow-y-auto">
         <motion.header 
@@ -118,8 +120,8 @@ export default function ProductsPage() {
             <div className="flex items-center gap-2 text-blue-500 font-bold text-[10px] mb-1 uppercase tracking-widest">
                <Package size={14} /> <span>WAREHOUSE MANAGEMENT</span>
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight">Products Catalog</h1>
-            <p className="text-slate-400 mt-1 text-base font-medium">Detailed oversight of your inventory assets and stock thresholds.</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Products Catalog</h1>
+            <p className="text-slate-600 mt-1 text-base font-medium">Detailed oversight of your inventory assets and stock thresholds.</p>
           </div>
           <button 
             onClick={() => {
@@ -142,7 +144,7 @@ export default function ProductsPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Asset Name</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Asset Name</label>
                 <input 
                   required
                   className="input-field" 
@@ -152,7 +154,7 @@ export default function ProductsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Serial SKU</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Serial SKU</label>
                 <input 
                   required
                   className="input-field" 
@@ -165,7 +167,7 @@ export default function ProductsPage() {
 
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Barcode</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Barcode</label>
                 <input 
                   className="input-field" 
                   placeholder="e.g. 123456789"
@@ -174,32 +176,32 @@ export default function ProductsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Classification</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Classification</label>
                 <select 
                   className="input-field"
                   value={formData.category_id}
                   onChange={(e) => setFormData({...formData, category_id: e.target.value})}
                 >
-                  <option value="" className="bg-[#0f172a]">Select Category</option>
-                  {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-[#0f172a]">{c.name}</option>)}
+                  <option value="" className="bg-white text-slate-900">Select Category</option>
+                  {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-white text-slate-900">{c.name}</option>)}
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Primary Supplier</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Primary Supplier</label>
                 <select 
                   className="input-field"
                   value={formData.supplier_id}
                   onChange={(e) => setFormData({...formData, supplier_id: e.target.value})}
                 >
-                  <option value="" className="bg-[#0f172a]">Select Supplier</option>
-                  {suppliers.map((s: any) => <option key={s.id} value={s.id} className="bg-[#0f172a]">{s.name}</option>)}
+                  <option value="" className="bg-white text-slate-900">Select Supplier</option>
+                  {suppliers.map((s: any) => <option key={s.id} value={s.id} className="bg-white text-slate-900">{s.name}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Unit Price (₹)</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Unit Price (₹)</label>
                 <input 
                   required type="number" step="0.01"
                   className="input-field" 
@@ -212,7 +214,7 @@ export default function ProductsPage() {
 
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Opening Volume</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Opening Volume</label>
                 <input 
                   required type="number"
                   className="input-field" 
@@ -222,7 +224,7 @@ export default function ProductsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Min Threshold</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Min Threshold</label>
                 <input 
                   required type="number"
                   className="input-field" 
@@ -234,7 +236,7 @@ export default function ProductsPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Technical Specifications</label>
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Technical Specifications</label>
               <textarea 
                 rows={2}
                 className="input-field" 
@@ -255,7 +257,7 @@ export default function ProductsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="glass-card overflow-hidden"
         >
-          <div className="p-6 border-b border-white/5 flex flex-col md:flex-row gap-4 justify-between items-center bg-white/[0.02]">
+          <div className="p-6 border-b border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-center bg-slate-50">
             <div className="relative w-full md:w-80 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={18} />
               <input
@@ -263,10 +265,10 @@ export default function ProductsPage() {
                 placeholder="Search by name or SKU..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl py-2.5 pl-11 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-semibold"
+                className="w-full bg-white border border-slate-300 rounded-xl py-2.5 pl-11 pr-4 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-semibold"
               />
             </div>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-400 hover:text-white hover:border-blue-500 transition-all text-xs font-black uppercase tracking-widest group">
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-300 text-slate-700 hover:text-slate-900 hover:border-blue-500 transition-all text-xs font-black uppercase tracking-widest group">
                <Filter size={16} className="group-hover:text-blue-500 transition-colors" />
                <span>Filters</span>
             </button>
@@ -275,7 +277,7 @@ export default function ProductsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-900/80 text-slate-500 text-[10px] uppercase tracking-[0.2em] font-black">
+                <tr className="bg-slate-100 text-slate-700 text-[10px] uppercase tracking-[0.2em] font-black">
                   <th className="px-6 py-4">Asset Information</th>
                   <th className="px-6 py-4">Serial SKU / Barcode</th>
                   <th className="px-6 py-4">Classification</th>
@@ -284,7 +286,7 @@ export default function ProductsPage() {
                   <th className="px-6 py-4 text-right">Ops</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-xs">
+              <tbody className="divide-y divide-slate-200 text-xs">
                 <AnimatePresence>
                   {loading ? (
                     <tr>
@@ -306,15 +308,15 @@ export default function ProductsPage() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                         key={p.id} 
-                        className="hover:bg-white/[0.03] transition-colors group"
+                        className="hover:bg-slate-100 transition-colors group"
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center border border-white/5 group-hover:bg-blue-600/10 group-hover:border-blue-500/30 transition-all">
-                               <ShoppingBag className="text-slate-500 group-hover:text-blue-500" size={18} />
+                            <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center border border-slate-300 group-hover:bg-blue-100 group-hover:border-blue-300 transition-all">
+                               <ShoppingBag className="text-slate-600 group-hover:text-blue-600" size={18} />
                             </div>
                             <div>
-                               <div className="font-extrabold text-white group-hover:text-blue-400 transition-colors text-sm">{p.name}</div>
+                               <div className="font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors text-sm">{p.name}</div>
                                <div className="text-[10px] text-slate-500 font-medium truncate max-w-[150px] mt-0.5">{p.description}</div>
                             </div>
                           </div>
@@ -326,24 +328,24 @@ export default function ProductsPage() {
                         <td className="px-6 py-4">
                           <span className="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[9px] font-black uppercase tracking-wider">{p.category_name || 'General'}</span>
                         </td>
-                        <td className="px-6 py-4 font-black text-white text-base">₹{Number(p.price).toFixed(2)}</td>
+                        <td className="px-6 py-4 font-black text-slate-900 text-base">₹{Number(p.price).toFixed(2)}</td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                              <div className={`w-2 h-2 rounded-full ${p.stock_quantity <= p.min_stock_level ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]'}`}></div>
-                             <span className={`font-black text-sm ${p.stock_quantity <= p.min_stock_level ? 'text-rose-500' : 'text-slate-200'}`}>{p.stock_quantity}</span>
+                             <span className={`font-black text-sm ${p.stock_quantity <= p.min_stock_level ? 'text-rose-500' : 'text-slate-900'}`}>{p.stock_quantity}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
                             <button 
                               onClick={() => handleEdit(p)}
-                              className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none transition-all text-slate-400 hover:text-white shadow-lg"
+                              className="p-2.5 rounded-xl bg-blue-100 border border-blue-300 hover:bg-blue-600 border-none transition-all text-blue-700 hover:text-white shadow-lg"
                             >
                               <Edit2 size={16} />
                             </button>
                             <button 
                               onClick={() => handleDeleteProduct(p.id)}
-                              className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none transition-all text-slate-400 hover:text-white shadow-lg"
+                              className="p-2.5 rounded-xl bg-rose-100 border border-rose-300 hover:bg-rose-600 border-none transition-all text-rose-700 hover:text-white shadow-lg"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -357,13 +359,13 @@ export default function ProductsPage() {
             </table>
           </div>
 
-          <div className="p-8 border-t border-white/5 flex items-center justify-between text-slate-500 text-xs font-black uppercase tracking-[0.2em]">
+          <div className="p-8 border-t border-slate-300 flex items-center justify-between text-slate-600 text-xs font-black uppercase tracking-[0.2em]">
             <span>Active Record: {filteredProducts.length} Items</span>
             <div className="flex gap-3">
-              <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
-                <ChevronLeft size={18} />
+              <button className="p-2.5 rounded-xl bg-slate-200 border border-slate-300 hover:bg-slate-300 transition-all text-slate-700">
+                <ChevronLeft size={20} />
               </button>
-              <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+              <button className="p-2.5 rounded-xl bg-slate-200 border border-slate-300 hover:bg-slate-300 transition-all text-slate-700">
                 <ChevronRight size={18} />
               </button>
             </div>

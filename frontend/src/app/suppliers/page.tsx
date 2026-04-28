@@ -90,7 +90,7 @@ export default function SuppliersPage() {
   };
 
   return (
-    <div className="flex bg-[#020617] min-h-screen text-slate-200">
+    <div className="flex bg-[#f8fafc] min-h-screen text-slate-900">
       <Sidebar />
       <main className="flex-1 p-6 overflow-y-auto">
         <motion.header 
@@ -102,8 +102,8 @@ export default function SuppliersPage() {
             <div className="flex items-center gap-2 text-emerald-500 font-bold text-[10px] mb-1 uppercase tracking-widest">
                <Truck size={14} /> <span>LOGISTICS NETWORK</span>
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight">Supply Partners</h1>
-            <p className="text-slate-400 mt-1 text-base font-medium">Manage your upstream communication and vendor protocols.</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Supply Partners</h1>
+            <p className="text-slate-600 mt-1 text-base font-medium">Manage your upstream communication and vendor protocols.</p>
           </div>
           <button 
             onClick={() => {
@@ -122,7 +122,7 @@ export default function SuppliersPage() {
           <form onSubmit={handleAddSupplier} className="space-y-5">
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Organization Name</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Organization Name</label>
                 <input 
                   required
                   className="input-field" 
@@ -132,7 +132,7 @@ export default function SuppliersPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Lead Liaison</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Lead Liaison</label>
                 <input 
                   required
                   className="input-field" 
@@ -145,7 +145,7 @@ export default function SuppliersPage() {
 
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Email Terminal</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Email Terminal</label>
                 <input 
                   required type="email"
                   className="input-field" 
@@ -155,7 +155,7 @@ export default function SuppliersPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Secure Line</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Secure Line</label>
                 <input 
                   required
                   className="input-field" 
@@ -167,7 +167,7 @@ export default function SuppliersPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Operational Headquarters</label>
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Operational Headquarters</label>
               <textarea 
                 rows={2}
                 className="input-field" 
@@ -202,10 +202,10 @@ export default function SuppliersPage() {
                   className="glass-card p-8 group relative overflow-hidden hover:border-emerald-500/50 transition-all"
                 >
                   <div className="absolute top-0 right-0 p-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                      <button onClick={() => handleEdit(s)} className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
+                      <button onClick={() => handleEdit(s)} className="p-2.5 rounded-xl bg-blue-100 border border-blue-300 hover:bg-blue-600 border-none transition-all text-blue-700 hover:text-white shadow-lg">
                         <Edit2 size={16} />
                       </button>
-                      <button onClick={() => handleDelete(s.id)} className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:bg-rose-600 border-none transition-all text-slate-400 hover:text-white shadow-lg">
+                      <button onClick={() => handleDelete(s.id)} className="p-2.5 rounded-xl bg-rose-100 border border-rose-300 hover:bg-rose-600 border-none transition-all text-rose-700 hover:text-white shadow-lg">
                         <Trash2 size={16} />
                       </button>
                   </div>
@@ -216,29 +216,29 @@ export default function SuppliersPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-4 group/item">
-                        <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-blue-500/20 group-hover/item:text-blue-500 transition-all">
+                        <div className="p-2 rounded-lg bg-blue-100 group-hover/item:bg-blue-200 group-hover/item:text-blue-600 transition-all">
                            <Mail size={18} />
                         </div>
-                        <span className="text-sm font-semibold text-slate-400 group-hover/item:text-white transition-colors">{s.email || 'N/A'}</span>
+                        <span className="text-sm font-semibold text-slate-700 group-hover/item:text-blue-700 transition-colors">{s.email || 'N/A'}</span>
                       </div>
                       <div className="flex items-center gap-4 group/item">
-                        <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-emerald-500/20 group-hover/item:text-emerald-500 transition-all">
+                        <div className="p-2 rounded-lg bg-emerald-100 group-hover/item:bg-emerald-200 group-hover/item:text-emerald-600 transition-all">
                            <Phone size={18} />
                         </div>
-                        <span className="text-sm font-semibold text-slate-400 group-hover/item:text-white transition-colors">{s.phone || 'N/A'}</span>
+                        <span className="text-sm font-semibold text-slate-700 group-hover/item:text-emerald-700 transition-colors">{s.phone || 'N/A'}</span>
                       </div>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-start gap-4 group/item">
-                        <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-amber-500/20 group-hover/item:text-amber-500 transition-all shrink-0">
+                        <div className="p-2 rounded-lg bg-amber-100 group-hover/item:bg-amber-200 group-hover/item:text-amber-600 transition-all shrink-0">
                            <MapPin size={18} />
                         </div>
-                        <span className="text-sm font-medium text-slate-400 leading-relaxed group-hover/item:text-white transition-colors line-clamp-2">{s.address || 'Field Headquarters Unknown'}</span>
+                        <span className="text-sm font-medium text-slate-700 leading-relaxed group-hover/item:text-amber-700 transition-colors line-clamp-2">{s.address || 'Field Headquarters Unknown'}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-8 pt-8 border-t border-white/5 flex gap-4">
+                  <div className="mt-8 pt-8 border-t border-slate-300 flex gap-4">
                   </div>
                 </motion.div>
               ))
